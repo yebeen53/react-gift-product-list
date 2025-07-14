@@ -2,6 +2,7 @@ import { useForm, useFieldArray, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { orderSchema } from '@/schemas/orderSchema';
 import type { OrderFormData } from '@/schemas/orderSchema';
+import { FormProvider } from 'react-hook-form';
 
 import useRequireAuth from '@/hooks/useRequireAuth';
 import useCustomTheme from '@/hooks/useCustomTheme';
@@ -21,14 +22,7 @@ const OrderPage = () => {
   const user = useRequireAuth();
   if (!user) return null;
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<OrderFormData>({
+  const methods = useForm<OrderFormData>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
       message: '',
@@ -37,6 +31,15 @@ const OrderPage = () => {
       recipients: [],
     },
   });
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = methods;
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -67,50 +70,58 @@ const OrderPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      css={{
-        maxWidth: '720px',
-        margin: 'auto',
-        padding: theme.spacing.spacing5,
-      }}
-    >
-      <CardSelector
-        selectedCardId={selectedCardId}
-        setValue={setValue}
-        theme={theme}
-      />
-
-      <MessageInput register={register} error={errors.message} theme={theme} />
-
-      <SenderInput
-        register={register}
-        error={errors.senderName}
-        theme={theme}
-      />
-
-      <RecipientSummary
-        recipients={recipients}
-        errors={errors.recipients}
-        append={append}
-        setModalOpen={setModalOpen}
-        theme={theme}
-      />
-
-      {isModalOpen && (
-        <RecipientModal
-          fields={fields}
-          register={register}
-          errors={errors}
-          append={append}
-          remove={remove}
+    <FormProvider {...methods}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        css={{
+          maxWidth: '720px',
+          margin: 'auto',
+          padding: theme.spacing.spacing5,
+        }}
+      >
+        <CardSelector
+          selectedCardId={selectedCardId}
+          setValue={setValue}
           theme={theme}
-          setModalOpen={setModalOpen}
         />
-      )}
 
-      <PriceSummary totalPrice={totalPrice} theme={theme} />
-    </form>
+        <MessageInput
+          register={register}
+          error={errors.message}
+          theme={theme}
+        />
+
+        <SenderInput
+          register={register}
+          error={errors.senderName}
+          theme={theme}
+        />
+
+        <RecipientSummary
+          recipients={recipients}
+          errors={errors.recipients}
+          append={append}
+          setModalOpen={setModalOpen}
+          theme={theme}
+          
+        />
+
+        {isModalOpen && (
+          <RecipientModal
+            fields={fields}
+            register={register}
+            errors={errors}
+            append={append}
+            remove={remove}
+            theme={theme}
+            setModalOpen={setModalOpen}
+            setValue={setValue}
+          />
+        )}
+
+        <PriceSummary totalPrice={totalPrice} theme={theme} />
+      </form>
+    </FormProvider>
   );
 };
 
