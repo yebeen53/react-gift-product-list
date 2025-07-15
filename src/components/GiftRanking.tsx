@@ -1,22 +1,22 @@
+import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import useCustomTheme from '../hooks/useCustomTheme';
-import type { Theme } from '@/data/theme';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Button from '@/components/Button';
 import GiftItem from '@/components/GiftItem';
-import { useState } from 'react';
+import type { Theme } from '@/data/theme';
+
+interface Product {
+  id: number;
+  brand: string;
+  name: string;
+  price: number;
+  imageURL: string;
+  ranking: number;
+}
 
 const tabs = ['전체', '여성이', '남성이', '청소년이'];
 const subTabs = ['받고 싶어한', '많이 선물한', '위시로 받은'];
-
-const products = Array.from({ length: 18 }).map((_, i) => ({
-  id: i + 1,
-  brand: 'BBQ',
-  name: 'BBQ',
-  price: 29000,
-  image:
-    'https://st.kakaocdn.net/product/gift/product/20231030175450_53e90ee9708f45ffa45b3f7b4bc01c7c.jpg',
-}));
 
 const sectionStyle = (theme: Theme) => css`
   padding: ${theme.spacing.spacing5};
@@ -47,7 +47,7 @@ const gridStyle = (theme: Theme) => css`
   gap: ${theme.spacing.spacing4};
 `;
 
-const morestyle = css`
+const moreStyle = css`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,48 +58,84 @@ const GiftRanking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const selectedTab = (() => {
-    const genderFromSearchParams = searchParams.get('gender');
-    if (genderFromSearchParams && tabs.includes(genderFromSearchParams)) {
-      return genderFromSearchParams;
-    }
-    return '전체';
-  })();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [visible, setVisible] = useState(6);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const selectedSubTab = (() => {
-    const categoryFromSearchParams = searchParams.get('category');
-    if (
-      categoryFromSearchParams &&
-      subTabs.includes(categoryFromSearchParams)
-    ) {
-      return categoryFromSearchParams;
+  const selectedTab = searchParams.get('gender') && tabs.includes(searchParams.get('gender')!)
+    ? searchParams.get('gender')!
+    : '전체';
+
+  const selectedSubTab = searchParams.get('category') && subTabs.includes(searchParams.get('category')!)
+    ? searchParams.get('category')!
+    : '받고 싶어한';
+
+  const targetMap: Record<string, string> = {
+    전체: 'ALL',
+    여성이: 'FEMALE',
+    남성이: 'MALE',
+    청소년이: 'YOUTH',
+  };
+
+  const rankMap: Record<string, string> = {
+    '받고 싶어한': 'MANY_WISH',
+    '많이 선물한': 'MANY_RECEIVE',
+    '위시로 받은': 'MANY_WISH_RECEIVE',
+  };
+
+  const fetchRanking = async () => {
+    setLoading(true);
+    setError(false);
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+
+    try {
+      const res = await fetch(
+        `${baseUrl}/api/products/ranking?targetType=${targetMap[selectedTab]}&rankType=${rankMap[selectedSubTab]}`
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`API 오류: ${res.status} ${text}`);
+      }
+
+      const { data } = await res.json();
+      const mapped = data.map((item: any, index: number) => ({
+        id: item.id,
+        brand: item.brandInfo?.name || '',
+        name: item.name,
+        price: item.price?.sellingPrice || 0,
+        imageURL: item.imageURL,
+        ranking: index + 1,
+      }));
+      setProducts(mapped);
+    } catch (err) {
+      console.error('fetch 실패:', err);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
-    return '받고 싶어한';
-  })();
+  };
+
+  useEffect(() => {
+    fetchRanking();
+    setVisible(6);
+  }, [selectedTab, selectedSubTab]);
 
   const onTabClick = (tab: string) => {
-    setSearchParams(
-      { gender: tab, category: selectedSubTab },
-      { replace: true }
-    );
+    setSearchParams({ gender: tab, category: selectedSubTab }, { replace: true });
   };
 
   const onSubTabClick = (subTab: string) => {
-    setSearchParams(
-      { gender: selectedTab, category: subTab },
-      { replace: true }
-    );
+    setSearchParams({ gender: selectedTab, category: subTab }, { replace: true });
   };
 
-  const [visible, setVisible] = useState(6);
   const handleMore = () => {
     setVisible((prev) => Math.min(prev + 3, products.length));
   };
 
-  // 상품 클릭 시 주문 페이지로 이동 (예: /order)
-  const handleProductClick = (id: number) => {
-    // 필요하면 상품 id 전달 가능 (state나 쿼리)
-    navigate('/order', { state: { productId: id } });
+  const handleProductClick = (product: Product) => {
+    navigate('/order', { state: { product } });
   };
 
   return (
@@ -135,27 +171,35 @@ const GiftRanking = () => {
         ))}
       </div>
 
-      <div css={gridStyle(theme)}>
-        {products.slice(0, visible).map((item) => (
-          <div
-            key={item.id}
-            onClick={() => handleProductClick(item.id)}
-            style={{ cursor: 'pointer' }}
-          >
-            <GiftItem
-              id={item.id}
-              brand={item.brand}
-              name={item.name}
-              price={item.price}
-              image={item.image}
-              theme={theme}
-            />
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <p>로딩중...</p>
+      ) : error ? (
+        <p>데이터를 불러오는데 실패했습니다.</p>
+      ) : products.length === 0 ? (
+        <p>상품이 없습니다.</p>
+      ) : (
+        <div css={gridStyle(theme)}>
+          {products.slice(0, visible).map((item) => (
+            <div
+              key={item.id}
+              onClick={() => handleProductClick(item)}
+              style={{ cursor: 'pointer' }}
+            >
+              <GiftItem
+                id={item.id}
+                brand={item.brand}
+                name={item.name}
+                price={item.price}
+                image={item.imageURL}
+                theme={theme}
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
-      {visible < products.length && (
-        <div css={morestyle}>
+      {visible < products.length && !loading && !error && (
+        <div css={moreStyle}>
           <Button onClick={handleMore} baseColor="white" textColor="black">
             더보기
           </Button>

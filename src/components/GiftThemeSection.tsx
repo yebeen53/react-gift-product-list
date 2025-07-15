@@ -1,7 +1,8 @@
 import { css } from '@emotion/react';
 import useCustomTheme from '../hooks/useCustomTheme';
-import category from '../../mockdata';
 import type { Theme } from '@/data/theme';
+import { useEffect, useState } from 'react';
+import { fetchThemes, type ThemeItem } from '@/api/themes'; 
 
 const wrapperStyle = (theme: Theme) => css`
   padding: ${theme.spacing.spacing5};
@@ -10,7 +11,6 @@ const wrapperStyle = (theme: Theme) => css`
 const titleStyle = (theme: Theme) => css`
   font-size: ${theme.typography.title2Bold.fontSize};
   font-weight: ${theme.typography.title2Bold.fontWeight};
-  line-height: ${theme.typography.title2Bold.lineHeight};
   margin-bottom: ${theme.spacing.spacing4};
 `;
 
@@ -30,6 +30,12 @@ const itemStyle = (theme: Theme) => css`
   align-items: center;
   text-align: center;
 
+  img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+  }
+
   span {
     font-size: ${theme.typography.label1Regular.fontSize};
     font-weight: ${theme.typography.label1Regular.fontWeight};
@@ -37,21 +43,35 @@ const itemStyle = (theme: Theme) => css`
     color: ${theme.colors.semantic.textDefault};
     margin-top: ${theme.spacing.spacing2};
   }
-
-  img {
-    width: 56px;
-    height: 56px;
-    object-fit: contain;
-  }
 `;
 
 const GiftThemeSection = () => {
   const theme = useCustomTheme();
+  const [themes, setThemes] = useState<ThemeItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchThemes()
+      .then((themeList) => {
+        setThemes(themeList);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div css={wrapperStyle(theme)}>로딩 중...</div>;
+  if (error || themes.length === 0) return null;
+
   return (
     <section css={wrapperStyle(theme)}>
       <h2 css={titleStyle(theme)}>선물 테마</h2>
       <div css={gridStyle(theme)}>
-        {category.map((item) => (
+        {themes.map((item: ThemeItem) => (
           <div key={item.themeId} css={itemStyle(theme)}>
             <img src={item.image} alt={item.name} />
             <span>{item.name}</span>
@@ -61,4 +81,5 @@ const GiftThemeSection = () => {
     </section>
   );
 };
+
 export default GiftThemeSection;
