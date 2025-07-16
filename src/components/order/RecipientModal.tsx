@@ -10,7 +10,7 @@ import type { OrderFormData } from '@/schemas/orderSchema';
 import { useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
-
+import type { Theme } from '@/data/theme';
 type Props = {
   register: UseFormRegister<OrderFormData>;
   errors?: FieldErrors<OrderFormData>;
@@ -18,11 +18,11 @@ type Props = {
   remove: UseFieldArrayRemove;
   append: UseFieldArrayAppend<OrderFormData, 'recipients'>;
   setModalOpen: (open: boolean) => void;
-  theme: any;
-  setValue: UseFormSetValue<OrderFormData>; 
+  theme: Theme;
+  setValue: UseFormSetValue<OrderFormData>;
 };
 
-const ModalWrapper = styled.div<{ theme: any }>`
+const ModalWrapper = styled.div<{ theme: Theme }>`
   position: fixed;
   top: 50%;
   left: 50%;
@@ -43,13 +43,13 @@ const Title = styled.h2`
   margin-bottom: 8px;
 `;
 
-const InfoText = styled.p<{ theme: any }>`
+const InfoText = styled.p<{ theme: Theme }>`
   font-size: 13px;
   color: ${({ theme }) => theme.colors.semantic.textDefault};
   margin-bottom: 16px;
 `;
 
-const AddButton = styled.button<{ theme: any; disabled: boolean }>`
+const AddButton = styled.button<{ theme: Theme; disabled: boolean }>`
   margin-bottom: 16px;
   padding: 6px 12px;
   background-color: ${({ theme }) => theme.colors.semantic.backgroundFill};
@@ -58,7 +58,7 @@ const AddButton = styled.button<{ theme: any; disabled: boolean }>`
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `;
 
-const RecipientContainer = styled.div<{ theme: any }>`
+const RecipientContainer = styled.div<{ theme: Theme }>`
   border-top: 1px solid ${({ theme }) => theme.colors.semantic.borderDefault};
   padding-top: 16px;
   margin-bottom: 16px;
@@ -70,7 +70,7 @@ const Row = styled.div`
   align-items: center;
 `;
 
-const DeleteButton = styled.button<{ theme: any }>`
+const DeleteButton = styled.button<{ theme: Theme }>`
   color: black;
   background: white;
   border: 1px solid ${({ theme }) => theme.colors.semantic.textDefault};
@@ -79,7 +79,7 @@ const DeleteButton = styled.button<{ theme: any }>`
   padding: 3px;
 `;
 
-const Input = styled.input<{ theme: any }>`
+const Input = styled.input<{ theme: Theme }>`
   width: 100%;
   padding: 8px 12px;
   border: 1px solid ${({ theme }) => theme.colors.semantic.borderDefault};
@@ -89,7 +89,7 @@ const Input = styled.input<{ theme: any }>`
   color: ${({ theme }) => theme.colors.semantic.textDefault};
 `;
 
-const ErrorText = styled.p<{ theme: any }>`
+const ErrorText = styled.p<{ theme: Theme }>`
   color: ${({ theme }) => theme.colors.semantic.statusCritical};
   margin-top: 0;
   margin-bottom: 8px;
@@ -102,7 +102,7 @@ const BottomButtonGroup = styled.div`
   margin-top: 24px;
 `;
 
-const CancelButton = styled.button<{ theme: any }>`
+const CancelButton = styled.button<{ theme: Theme }>`
   flex: 1;
   padding: 12px;
   border-radius: 8px;
@@ -110,7 +110,7 @@ const CancelButton = styled.button<{ theme: any }>`
   background: ${({ theme }) => theme.colors.semantic.backgroundDefault};
 `;
 
-const CompleteButton = styled.button<{ theme: any }>`
+const CompleteButton = styled.button<{ theme: Theme }>`
   flex: 1;
   padding: 12px;
   border-radius: 8px;
@@ -118,7 +118,6 @@ const CompleteButton = styled.button<{ theme: any }>`
   background-color: ${({ theme }) => theme.colors.semantic.kakaoYellow};
   font-weight: bold;
 `;
-
 
 const RecipientModal = ({
   register,
@@ -138,22 +137,18 @@ const RecipientModal = ({
     appendedOnOpen.current = false;
   }, []);
 
-
   const handleCancel = () => {
     setValue('recipients', []);
     setModalOpen(false);
   };
 
-  
   const handleComplete = async () => {
     const isValid = await trigger('recipients');
     if (isValid) {
       appendedOnOpen.current = false;
       setModalOpen(false);
-    } else {
     }
   };
-
 
   return (
     <ModalWrapper theme={theme}>
@@ -180,7 +175,11 @@ const RecipientModal = ({
         <RecipientContainer key={field.id} theme={theme}>
           <Row>
             <strong>받는 사람 {index + 1}</strong>
-            <DeleteButton type="button" onClick={() => remove(index)} theme={theme}>
+            <DeleteButton
+              type="button"
+              onClick={() => remove(index)}
+              theme={theme}
+            >
               삭제
             </DeleteButton>
           </Row>
@@ -192,7 +191,9 @@ const RecipientModal = ({
               theme={theme}
             />
             {recipientErrors?.[index]?.name && (
-              <ErrorText theme={theme}>{recipientErrors[index]?.name?.message}</ErrorText>
+              <ErrorText theme={theme}>
+                {recipientErrors[index]?.name?.message}
+              </ErrorText>
             )}
 
             <Input
@@ -201,7 +202,9 @@ const RecipientModal = ({
               theme={theme}
             />
             {recipientErrors?.[index]?.phone && (
-              <ErrorText theme={theme}>{recipientErrors[index]?.phone?.message}</ErrorText>
+              <ErrorText theme={theme}>
+                {recipientErrors[index]?.phone?.message}
+              </ErrorText>
             )}
 
             <Input
@@ -212,7 +215,9 @@ const RecipientModal = ({
               theme={theme}
             />
             {recipientErrors?.[index]?.quantity && (
-              <ErrorText theme={theme}>{recipientErrors[index]?.quantity?.message}</ErrorText>
+              <ErrorText theme={theme}>
+                {recipientErrors[index]?.quantity?.message}
+              </ErrorText>
             )}
           </div>
         </RecipientContainer>
@@ -231,4 +236,3 @@ const RecipientModal = ({
 };
 
 export default RecipientModal;
-

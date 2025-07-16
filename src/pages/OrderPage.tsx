@@ -16,11 +16,12 @@ import RecipientSummary from '@/components/order/RecipientSummary';
 import RecipientModal from '@/components/order/RecipientModal';
 import PriceSummary from '@/components/order/PriceSummary';
 
+
 const OrderPage = () => {
+  const user = useRequireAuth();
   const theme = useCustomTheme();
   const navigate = useNavigate();
-  const user = useRequireAuth();
-  if (!user) return null;
+
 
   const methods = useForm<OrderFormData>({
     resolver: zodResolver(orderSchema),
@@ -46,8 +47,12 @@ const OrderPage = () => {
     name: 'recipients',
   });
 
+
+  const [isModalOpen,setModalOpen]=useState(false);
   const selectedCardId = watch('selectedCardId');
   const recipients = watch('recipients');
+
+  if (!user) return null;
 
   const productPrice = 29000;
   const totalQuantity = recipients.reduce(
@@ -66,8 +71,6 @@ const OrderPage = () => {
     );
     navigate('/');
   };
-
-  const [isModalOpen, setModalOpen] = useState(false);
 
   return (
     <FormProvider {...methods}>

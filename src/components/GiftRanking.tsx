@@ -1,130 +1,176 @@
+import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import useCustomTheme from '../hooks/useCustomTheme';
-import type { Theme } from '@/data/theme';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Button from '@/components/Button';
 import GiftItem from '@/components/GiftItem';
-import { useState } from 'react';
+import { apiClient } from '@/api/apiClient';
+import type { ProductApiResponse, Product } from '@/types/product';
 
-const tabs = ['전체', '여성이', '남성이', '청소년이'];
-const subTabs = ['받고 싶어한', '많이 선물한', '위시로 받은'];
+const DEFAULT_GENDER: UserGenderLabel = '전체';
+const DEFAULT_CATEGORY: GiftRankingCategoryLabel = '받고 싶어한';
 
-const products = Array.from({ length: 18 }).map((_, i) => ({
-  id: i + 1,
-  brand: 'BBQ',
-  name: 'BBQ',
-  price: 29000,
-  image:
-    'https://st.kakaocdn.net/product/gift/product/20231030175450_53e90ee9708f45ffa45b3f7b4bc01c7c.jpg',
-}));
+const INITIAL_VISIBLE_COUNT = 6;
 
-const sectionStyle = (theme: Theme) => css`
-  padding: ${theme.spacing.spacing5};
-`;
+const userLabelToCodeMap = {
+  전체: 'ALL',
+  여성이: 'FEMALE',
+  남성이: 'MALE',
+  청소년이: 'TEEN',
+} as const;
 
-const titleStyle = (theme: Theme) => css`
-  font-size: ${theme.typography.title1Bold.fontSize};
-  font-weight: ${theme.typography.title1Bold.fontWeight};
-  margin-bottom: ${theme.spacing.spacing4};
-`;
+const giftRankingCategoryLabelToCodeMap = {
+  '받고 싶어한': 'MANY_WISH',
+  '많이 선물한': 'MANY_RECEIVE',
+  '위시로 받은': 'MANY_WISH_RECEIVE',
+} as const;
 
-const tabsStyle = (theme: Theme) => css`
-  display: flex;
-  gap: ${theme.spacing.spacing2};
-  margin-bottom: ${theme.spacing.spacing3};
-`;
+export type UserGenderLabel = keyof typeof userLabelToCodeMap;
+export type UserGenderCode = (typeof userLabelToCodeMap)[UserGenderLabel];
+export type GiftRankingCategoryLabel =
+  keyof typeof giftRankingCategoryLabelToCodeMap;
+export type GiftRankingCategoryCode =
+  (typeof giftRankingCategoryLabelToCodeMap)[GiftRankingCategoryLabel];
 
-const subTabContainer = (theme: Theme) => css`
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: ${theme.spacing.spacing4};
-  font-size: 14px;
-`;
-
-const gridStyle = (theme: Theme) => css`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: ${theme.spacing.spacing4};
-`;
-
-const morestyle = css`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+const tabs: UserGenderLabel[] = Object.keys(
+  userLabelToCodeMap
+) as UserGenderLabel[];
+const subTabs: GiftRankingCategoryLabel[] = Object.keys(
+  giftRankingCategoryLabelToCodeMap
+) as GiftRankingCategoryLabel[];
 
 const GiftRanking = () => {
   const theme = useCustomTheme();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const selectedTab = (() => {
-    const genderFromSearchParams = searchParams.get('gender');
-    if (genderFromSearchParams && tabs.includes(genderFromSearchParams)) {
-      return genderFromSearchParams;
-    }
-    return '전체';
-  })();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const selectedSubTab = (() => {
-    const categoryFromSearchParams = searchParams.get('category');
-    if (
-      categoryFromSearchParams &&
-      subTabs.includes(categoryFromSearchParams)
-    ) {
-      return categoryFromSearchParams;
-    }
-    return '받고 싶어한';
-  })();
+  const selectedTab = tabs.includes(
+    searchParams.get('gender') as UserGenderLabel
+  )
+    ? (searchParams.get('gender') as UserGenderLabel)
+    : DEFAULT_GENDER;
 
-  const onTabClick = (tab: string) => {
-    setSearchParams(
-      { gender: tab, category: selectedSubTab },
-      { replace: true }
-    );
+  const selectedSubTab = subTabs.includes(
+    searchParams.get('category') as GiftRankingCategoryLabel
+  )
+    ? (searchParams.get('category') as GiftRankingCategoryLabel)
+    : DEFAULT_CATEGORY;
+
+  const fetchData = async (
+    genderCode: UserGenderCode,
+    categoryCode: GiftRankingCategoryCode
+  ) => {
+    setLoading(true);
+    setError(false);
+    try {
+      const params = { targetType: genderCode, rankType: categoryCode };
+      const response = await apiClient.get('/api/products/ranking', { params });
+
+      console.log('[API 응답]', response.data);
+
+      const productList =
+        response.data?.data?.map((item: ProductApiResponse, index: number) => ({
+          id: item.id,
+          brand: item.brandInfo?.name || '',
+          name: item.name,
+          price: item.price?.sellingPrice || 0,
+          imageURL: item.imageURL,
+          ranking: index + 1,
+        })) ?? [];
+
+      setProducts(productList);
+    } catch (err) {
+      console.error('랭킹 호출 실패:', err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const onSubTabClick = (subTab: string) => {
-    setSearchParams(
-      { gender: selectedTab, category: subTab },
-      { replace: true }
-    );
+  useEffect(() => {
+    const genderCode = userLabelToCodeMap[selectedTab];
+    const categoryCode = giftRankingCategoryLabelToCodeMap[selectedSubTab];
+    console.log('[API 호출]', genderCode, categoryCode);
+
+    fetchData(genderCode, categoryCode);
+    setVisibleCount(INITIAL_VISIBLE_COUNT);
+  }, [selectedTab, selectedSubTab]);
+
+  const updateParams = (
+    gender?: UserGenderLabel,
+    category?: GiftRankingCategoryLabel
+  ) => {
+    const current = new URLSearchParams(searchParams);
+    if (gender) current.set('gender', gender);
+    if (category) current.set('category', category);
+    setSearchParams(current, { replace: true });
   };
 
-  const [visible, setVisible] = useState(6);
   const handleMore = () => {
-    setVisible((prev) => Math.min(prev + 3, products.length));
+    setVisibleCount((prev) => Math.min(prev + 3, products.length));
   };
 
-  // 상품 클릭 시 주문 페이지로 이동 (예: /order)
-  const handleProductClick = (id: number) => {
-    // 필요하면 상품 id 전달 가능 (state나 쿼리)
-    navigate('/order', { state: { productId: id } });
+  const handleProductClick = (product: Product) => {
+    navigate('/order', { state: { product } });
   };
+
+  if (loading) return <p>로딩중...</p>;
+  if (error) return <p>데이터를 불러오는데 실패했습니다.</p>;
+  
 
   return (
-    <section css={sectionStyle(theme)}>
-      <h2 css={titleStyle(theme)}>실시간 급상승 선물랭킹</h2>
+    <section
+      css={css`
+        padding: ${theme.spacing.spacing5};
+      `}
+    >
+      <h2
+        css={css`
+          font-size: ${theme.typography.title1Bold.fontSize};
+          font-weight: ${theme.typography.title1Bold.fontWeight};
+          margin-bottom: ${theme.spacing.spacing4};
+        `}
+      >
+        실시간 급상승 선물랭킹
+      </h2>
 
-      <div css={tabsStyle(theme)}>
+      <div
+        css={css`
+          display: flex;
+          gap: ${theme.spacing.spacing2};
+          margin-bottom: ${theme.spacing.spacing3};
+        `}
+      >
         {tabs.map((tab) => (
           <Button
             key={tab}
             selected={tab === selectedTab}
             baseColor={theme.colors.blue400}
             selectedColor={theme.colors.blue900}
-            onClick={() => onTabClick(tab)}
+            onClick={() => updateParams(tab, undefined)}
           >
             {tab}
           </Button>
         ))}
       </div>
 
-      <div css={subTabContainer(theme)}>
+      <div
+        css={css`
+          display: flex;
+          justify-content: space-around;
+          margin-bottom: ${theme.spacing.spacing4};
+          font-size: 14px;
+        `}
+      >
         {subTabs.map((subTab) => (
           <Button
             key={subTab}
-            onClick={() => onSubTabClick(subTab)}
+            onClick={() => updateParams(undefined, subTab)}
             selected={subTab === selectedSubTab}
             baseColor={theme.colors.blue400}
             selectedColor={theme.colors.blue900}
@@ -134,12 +180,29 @@ const GiftRanking = () => {
           </Button>
         ))}
       </div>
-
-      <div css={gridStyle(theme)}>
-        {products.slice(0, visible).map((item) => (
+      {products.length === 0 ? (
+        <p
+          css={css`
+            text-align: center;
+            margin: 40px 0;
+            font-size: 16px;
+          `}
+        >
+          상품이 없습니다.
+        </p>
+      ) : (
+        <>
+      <div
+        css={css`
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: ${theme.spacing.spacing4};
+        `}
+      >
+        {products.slice(0, visibleCount).map((item, index) => (
           <div
             key={item.id}
-            onClick={() => handleProductClick(item.id)}
+            onClick={() => handleProductClick(item)}
             style={{ cursor: 'pointer' }}
           >
             <GiftItem
@@ -147,22 +210,29 @@ const GiftRanking = () => {
               brand={item.brand}
               name={item.name}
               price={item.price}
-              image={item.image}
+              image={item.imageURL}
+              highlight={index < 3}
+              rank={index + 1}
               theme={theme}
             />
           </div>
         ))}
       </div>
 
-      {visible < products.length && (
-        <div css={morestyle}>
+      {visibleCount < products.length && (
+        <div
+          css={css`
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          `}
+        >
           <Button onClick={handleMore} baseColor="white" textColor="black">
             더보기
           </Button>
         </div>
       )}
-    </section>
-  );
+      </>)}
+ </section> );
 };
-
 export default GiftRanking;

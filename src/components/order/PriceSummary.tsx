@@ -1,15 +1,15 @@
 import styled from 'styled-components';
-
+import type { Theme } from '@/data/theme';
 type Props = {
     totalPrice: number;
-    theme: any;
+    theme: Theme;
   };
 
   const SummaryBox = styled.div`
   margin-top: 16px;
 `;
 
-const OrderButton = styled.button<{ theme: any }>`
+const OrderButton = styled.button<{ theme: Theme}>`
   width: 100%;
   margin-top: 12px;
   padding: 12px;

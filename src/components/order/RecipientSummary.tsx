@@ -1,16 +1,18 @@
 import Button from '@/components/Button';
-import type { FieldErrors } from 'react-hook-form';
+import type { FieldErrors, UseFieldArrayAppend } from 'react-hook-form';
 import type { OrderFormData } from '@/schemas/orderSchema';
 import styled from 'styled-components';
+import type {Theme} from '@/data/theme';
+
 type Props = {
   recipients: OrderFormData['recipients'];
   errors?: FieldErrors<OrderFormData>['recipients'];
-  append: (value: any) => void;
+  append: UseFieldArrayAppend<OrderFormData, 'recipients'>;
   setModalOpen: (open: boolean) => void;
-  theme: any;
+  theme: Theme;
 };
 
-const Section = styled.section<{ theme: any }>`
+const Section = styled.section<{ theme: Theme }>`
   margin-top: 16px;
   border: 1px solid ${({ theme }) => theme.colors.semantic.borderDefault};
   border-radius: 12px;
@@ -23,7 +25,7 @@ const Heading = styled.h3`
   margin-bottom: 12px;
 `;
 
-const Description = styled.p<{ theme: any }>`
+const Description = styled.p<{ theme: Theme }>`
   color: ${({ theme }) => theme.colors.semantic.textDefault};
 `;
 
@@ -32,7 +34,7 @@ const RecipientList = styled.ul`
   margin-bottom: 16px;
 `;
 
-const ErrorMessage = styled.p<{ theme: any }>`
+const ErrorMessage = styled.p<{ theme: Theme }>`
   color: ${({ theme }) => theme.colors.semantic.statusCritical};
   margin-bottom: 16px;
   font-size: 13px;

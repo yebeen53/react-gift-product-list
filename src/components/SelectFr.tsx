@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import useCustomTheme from '../hooks/useCustomTheme';
 import type { Theme } from '@/data/theme';
-import useAuth from '@/context/AuthContext';
+import useAuth from '@/hooks/useAuth';
 const containerStyle = (theme: Theme) => css`
   padding: ${theme.spacing.spacing4};
   display: flex;

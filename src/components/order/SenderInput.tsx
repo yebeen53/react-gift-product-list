@@ -1,10 +1,13 @@
 import type { UseFormRegister } from 'react-hook-form';
 import type { OrderFormData } from '@/schemas/orderSchema';
 import styled from 'styled-components';
+import type {Theme} from '@/data/theme';
+
 type Props = {
   register: UseFormRegister<OrderFormData>;
   error?: { message?: string };
-  theme: any;
+  theme: Theme;
+
 };
 const Wrapper = styled.div``;
 
@@ -12,7 +15,7 @@ const Label = styled.label`
   font-weight: 500;
 `;
 
-const Input = styled.input<{ theme: any }>`
+const Input = styled.input<{ theme: Theme }>`
   width: 100%;
   height: 40px;
   border-radius: 8px;
@@ -22,7 +25,7 @@ const Input = styled.input<{ theme: any }>`
   padding: 0 8px;
 `;
 
-const ErrorMessage = styled.p<{ theme: any }>`
+const ErrorMessage = styled.p<{ theme: Theme }>`
   color: ${({ theme }) => theme.colors.semantic.statusCritical};
   margin-top: 4px;
   font-size: 13px;

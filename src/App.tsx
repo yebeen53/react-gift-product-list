@@ -4,7 +4,7 @@ import Navibar from '@/components/Navibar';
 import Login from '@/pages/Login';
 import NotFound from '@/pages/NotFound';
 import Homepage from '@/pages/Homepage';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './context/AuthProvider';
 import MyPage from './pages/MyPage';
 import OrderPage from './pages/OrderPage';
 

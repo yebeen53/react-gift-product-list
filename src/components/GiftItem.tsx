@@ -8,28 +8,28 @@ interface GiftItemProps {
   price: number;
   image: string;
   theme: Theme;
+  highlight?: boolean;
+  rank?: number;
 }
 
 const cardStyle = (theme: Theme) => css`
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  background: white;
   padding: ${theme.spacing.spacing2};
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 `;
 
-const rankBadge = () => css`
+const rankBadge = (theme: Theme, highlight?: boolean) => css`
   position: absolute;
   top: 8px;
   left: 8px;
-  background-color: red;
+  background-color: ${highlight ? theme.colors.red800 : theme.colors.gray700};
   color: white;
   font-size: 12px;
   width: 24px;
   height: 24px;
-  border-radius: 50%;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,7 +44,7 @@ const imageStyle = (theme: Theme) => css`
 
 const brandStyle = (theme: Theme) => css`
   font-size: 12px;
-  color: ${theme.colors.gray400};
+  color: ${theme.colors.semantic.textDefault};
 `;
 
 const nameStyle = css`
@@ -57,10 +57,20 @@ const priceStyle = css`
   margin-top: 4px;
 `;
 
-const GiftItem = ({ id, brand, name, price, image, theme }: GiftItemProps) => {
+const GiftItem = ({
+  brand,
+  name,
+  price,
+  image,
+  theme,
+  rank,
+  highlight,
+}: GiftItemProps) => {
   return (
     <div css={cardStyle(theme)}>
-      <div css={rankBadge}>{id}</div>
+      {typeof rank === 'number' && (
+        <div css={rankBadge(theme, highlight)}>{rank}</div>
+      )}
       <img src={image} alt={name} css={imageStyle(theme)} />
       <div css={brandStyle(theme)}>{brand}</div>
       <div css={nameStyle}>{name}</div>
