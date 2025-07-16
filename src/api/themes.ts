@@ -1,5 +1,4 @@
-const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-
+import { apiClient } from './apiClient';
 export interface ThemeItem {
   themeId: number;
   name: string;
@@ -7,9 +6,7 @@ export interface ThemeItem {
 }
 
 export const fetchThemes = async (): Promise<ThemeItem[]> => {
-  const res = await fetch(`${baseUrl}/api/themes`);
-  if (!res.ok) throw new Error('테마 API 오류');
-  const json = await res.json();
-
-  return Array.isArray(json.data) ? json.data : [];
+  const res = await apiClient.get('/api/themes');
+  const data = res.data?.data;
+  return Array.isArray(data) ? data : [];
 };
