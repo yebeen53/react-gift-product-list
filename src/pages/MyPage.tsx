@@ -2,7 +2,7 @@ import useRequireAuth from '@/hooks/useRequireAuth';
 import theme from '@/data/theme';
 import { useNavigate } from 'react-router-dom';
 import { css } from '@emotion/react';
-import useAuth from '@/context/AuthContext';
+import useAuth from '@/hooks/useAuth';
 
 const MyPage = () => {
   const user = useRequireAuth();
