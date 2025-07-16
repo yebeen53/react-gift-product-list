@@ -1,11 +1,11 @@
 import type { UseFormRegister } from 'react-hook-form';
 import type { OrderFormData } from '@/schemas/orderSchema';
 import styled from 'styled-components';
-
+import type { Theme } from '@/data/theme';
 type Props = {
   register: UseFormRegister<OrderFormData>;
   error?: { message?: string };
-  theme: any;
+  theme: Theme;
 };
 
 const Wrapper = styled.div`
@@ -16,7 +16,7 @@ const Label = styled.label`
   font-weight: 500;
 `;
 
-const TextArea = styled.textarea<{ theme: any }>`
+const TextArea = styled.textarea<{ theme: Theme }>`
   width: 100%;
   height: 60px;
   border-radius: 8px;
@@ -27,7 +27,7 @@ const TextArea = styled.textarea<{ theme: any }>`
   resize: none;
 `;
 
-const ErrorMessage = styled.p<{ theme: any }>`
+const ErrorMessage = styled.p<{ theme: Theme }>`
   color: ${({ theme }) => theme.colors.semantic.statusCritical};
   margin-top: 4px;
   font-size: 13px;
@@ -36,11 +36,10 @@ const ErrorMessage = styled.p<{ theme: any }>`
 const MessageInput = ({ register, error, theme }: Props) => {
   return (
     <Wrapper>
-    <Label>메시지</Label>
-    <TextArea {...register('message')} rows={3} theme={theme} />
-    {error && <ErrorMessage theme={theme}>{error.message}</ErrorMessage>}
-  </Wrapper>
-
+      <Label>메시지</Label>
+      <TextArea {...register('message')} rows={3} theme={theme} />
+      {error && <ErrorMessage theme={theme}>{error.message}</ErrorMessage>}
+    </Wrapper>
   );
 };
 

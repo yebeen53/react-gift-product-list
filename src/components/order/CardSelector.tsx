@@ -2,11 +2,11 @@ import orderCard from '@/data/orderCard';
 import type { UseFormSetValue } from 'react-hook-form';
 import type { OrderFormData } from '@/schemas/orderSchema';
 import styled from 'styled-components';
-
+import type {Theme} from '@/data/theme'
 type Props = {
   selectedCardId: number | null;
   setValue: UseFormSetValue<OrderFormData>;
-  theme: any;
+  theme: Theme;
 };
 
 const ScrollContainer = styled.div`
@@ -16,7 +16,7 @@ const ScrollContainer = styled.div`
   margin: 8px 0 16px;
 `;
 
-const CardThumbnail = styled.img<{ selected: boolean; theme: any }>`
+const CardThumbnail = styled.img<{ selected: boolean; theme: Theme }>`
   width: 80px;
   height: 50px;
   border-radius: 8px;

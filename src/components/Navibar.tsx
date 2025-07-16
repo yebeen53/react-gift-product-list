@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '@/context/AuthContext';
+import useAuth from '@/hooks/useAuth';
 import useCustomTheme from '../hooks/useCustomTheme';
 import type { Theme } from '@/data/theme';
 
