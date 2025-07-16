@@ -1,5 +1,4 @@
-
-export interface Product {
+export interface ProductApiResponse {
     id: number;
     name: string;
     gender: string;
@@ -16,3 +15,12 @@ export interface Product {
       imageURL: string;
     };
   }
+  export interface Product {
+    id: number;
+    brand: string;
+    name: string;
+    price: number;
+    imageURL: string;
+    ranking: number;
+  }
+  
