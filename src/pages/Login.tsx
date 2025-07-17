@@ -143,6 +143,6 @@ const Login = () => {
 };
 
 export default Login;
-function setUser(arg0: { name: any; email: any; authToken: any }) {
+function setUser(_arg0: { name: any; email: any; authToken: any }) {
   throw new Error('Function not implemented.');
 }
