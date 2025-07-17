@@ -70,13 +70,6 @@ const Login = () => {
         const token = response.data.data.authToken;
         localStorage.setItem('authToken', token);
         toast.success('로그인 성공!');
-
-        setUser({
-          name: response.data.data.name,
-          email: response.data.data.email,
-          authToken: token,
-        });
-
         const userInfo = response.data.data;
         login(userInfo);
         navigate(from, { replace: true });
@@ -143,6 +136,4 @@ const Login = () => {
 };
 
 export default Login;
-function setUser(_arg0: { name: any; email: any; authToken: any }) {
-  throw new Error('Function not implemented.');
-}
+
