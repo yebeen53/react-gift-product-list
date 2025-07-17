@@ -7,6 +7,7 @@ import Homepage from '@/pages/Homepage';
 import { AuthProvider } from './context/AuthProvider';
 import MyPage from './pages/MyPage';
 import OrderPage from './pages/OrderPage';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -14,11 +15,12 @@ function App() {
       <AuthProvider>
         <GlobalStyles />
         <Navibar />
+        <ToastContainer position="top-center" />
         <Routes>
           <Route path="/" element={<Navigate to="/homepage" replace />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/homepage/login" element={<Login />} />
-          <Route path="/order" element={<OrderPage />} />
+          <Route path="/order/:productId" element={<OrderPage />} />
           <Route path="/my" element={<MyPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

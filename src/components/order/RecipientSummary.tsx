@@ -2,7 +2,7 @@ import Button from '@/components/Button';
 import type { FieldErrors, UseFieldArrayAppend } from 'react-hook-form';
 import type { OrderFormData } from '@/schemas/orderSchema';
 import styled from 'styled-components';
-import type {Theme} from '@/data/theme';
+import type { Theme } from '@/data/theme';
 
 type Props = {
   recipients: OrderFormData['recipients'];
@@ -40,40 +40,44 @@ const ErrorMessage = styled.p<{ theme: Theme }>`
   font-size: 13px;
 `;
 
-const RecipientSummary = ({ recipients, errors, setModalOpen, theme }: Props) => {
+const RecipientSummary = ({
+  recipients,
+  errors,
+  setModalOpen,
+  theme,
+}: Props) => {
   return (
     <Section theme={theme}>
-    <Heading>받는 사람</Heading>
+      <Heading>받는 사람</Heading>
 
-    {recipients.length === 0 ? (
-      <Description theme={theme}>
-        받는 사람이 없습니다. <br />
-        받는 사람을 추가해주세요.
-      </Description>
-    ) : (
-      <RecipientList>
-        {recipients.map((r, index) => (
-          <li key={index}>
-            {r.name || ''} {r.phone || ''} {r.quantity || 1}개
-          </li>
-        ))}
-      </RecipientList>
-    )}
+      {recipients.length === 0 ? (
+        <Description theme={theme}>
+          받는 사람이 없습니다. <br />
+          받는 사람을 추가해주세요.
+        </Description>
+      ) : (
+        <RecipientList>
+          {recipients.map((r, index) => (
+            <li key={index}>
+              {r.name || ''} {r.phoneNumber || ''} {r.quantity || 1}개
+            </li>
+          ))}
+        </RecipientList>
+      )}
 
-    {typeof errors?.message === 'string' && (
-      <ErrorMessage theme={theme}>{errors.message}</ErrorMessage>
-    )}
+      {typeof errors?.message === 'string' && (
+        <ErrorMessage theme={theme}>{errors.message}</ErrorMessage>
+      )}
 
-    <Button
-      baseColor={theme.colors.semantic.borderDisabled}
-      textColor={theme.colors.semantic.textDefault}
-      onClick={() => setModalOpen(true)}
-    >
-      {recipients.length > 0 ? '수정' : '추가'}
-    </Button>
-  </Section>
-);
+      <Button
+        baseColor={theme.colors.semantic.borderDisabled}
+        textColor={theme.colors.semantic.textDefault}
+        onClick={() => setModalOpen(true)}
+      >
+        {recipients.length > 0 ? '수정' : '추가'}
+      </Button>
+    </Section>
+  );
 };
-
 
 export default RecipientSummary;

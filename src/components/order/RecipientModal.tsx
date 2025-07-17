@@ -162,7 +162,7 @@ const RecipientModal = ({
         type="button"
         onClick={() => {
           if (fields.length < 10) {
-            append({ name: '', phone: '', quantity: 1 });
+            append({ name: '', phoneNumber: '', quantity: 1 });
           }
         }}
         disabled={fields.length >= 10}
@@ -197,13 +197,13 @@ const RecipientModal = ({
             )}
 
             <Input
-              {...register(`recipients.${index}.phone` as const)}
+              {...register(`recipients.${index}.phoneNumber` as const)}
               placeholder="전화번호를 입력하세요."
               theme={theme}
             />
-            {recipientErrors?.[index]?.phone && (
+            {recipientErrors?.[index]?.phoneNumber && (
               <ErrorText theme={theme}>
-                {recipientErrors[index]?.phone?.message}
+                {recipientErrors[index]?.phoneNumber?.message}
               </ErrorText>
             )}
 

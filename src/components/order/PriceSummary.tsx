@@ -3,6 +3,7 @@ import type { Theme } from '@/data/theme';
 type Props = {
     totalPrice: number;
     theme: Theme;
+    onOrder:()=>void;
   };
 
   const SummaryBox = styled.div`
@@ -22,13 +23,13 @@ const OrderButton = styled.button<{ theme: Theme}>`
 
 
   
-  const PriceSummary = ({ totalPrice, theme }: Props) => {
+  const PriceSummary = ({ totalPrice, theme,onOrder }: Props) => {
     return (
       <>
         <SummaryBox>
         <strong>총 금액: {totalPrice.toLocaleString()}원</strong>
       </SummaryBox>
-      <OrderButton type="submit" theme={theme}>
+      <OrderButton type="submit" theme={theme} onClick={onOrder}>
         {totalPrice.toLocaleString()}원 주문하기
       </OrderButton>
 

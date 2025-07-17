@@ -71,8 +71,6 @@ const GiftRanking = () => {
       const params = { targetType: genderCode, rankType: categoryCode };
       const response = await apiClient.get('/api/products/ranking', { params });
 
-      console.log('[API 응답]', response.data);
-
       const productList =
         response.data?.data?.map((item: ProductApiResponse, index: number) => ({
           id: item.id,
@@ -116,12 +114,11 @@ const GiftRanking = () => {
   };
 
   const handleProductClick = (product: Product) => {
-    navigate('/order', { state: { product } });
+    navigate(`/order/${product.id}`);
   };
 
   if (loading) return <p>로딩중...</p>;
   if (error) return <p>데이터를 불러오는데 실패했습니다.</p>;
-  
 
   return (
     <section
@@ -164,7 +161,7 @@ const GiftRanking = () => {
           display: flex;
           justify-content: space-around;
           margin-bottom: ${theme.spacing.spacing4};
-          font-size: 14px;
+          font-size: ${theme.typography.label1Regular};
         `}
       >
         {subTabs.map((subTab) => (
@@ -192,47 +189,49 @@ const GiftRanking = () => {
         </p>
       ) : (
         <>
-      <div
-        css={css`
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: ${theme.spacing.spacing4};
-        `}
-      >
-        {products.slice(0, visibleCount).map((item, index) => (
           <div
-            key={item.id}
-            onClick={() => handleProductClick(item)}
-            style={{ cursor: 'pointer' }}
+            css={css`
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: ${theme.spacing.spacing4};
+            `}
           >
-            <GiftItem
-              id={item.id}
-              brand={item.brand}
-              name={item.name}
-              price={item.price}
-              image={item.imageURL}
-              highlight={index < 3}
-              rank={index + 1}
-              theme={theme}
-            />
+            {products.slice(0, visibleCount).map((item, index) => (
+              <div
+                key={item.id}
+                onClick={() => handleProductClick(item)}
+                style={{ cursor: 'pointer' }}
+              >
+                <GiftItem
+                  id={item.id}
+                  brand={item.brand}
+                  name={item.name}
+                  price={item.price}
+                  image={item.imageURL}
+                  highlight={index < 3}
+                  rank={index + 1}
+                  theme={theme}
+                />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {visibleCount < products.length && (
-        <div
-          css={css`
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          `}
-        >
-          <Button onClick={handleMore} baseColor="white" textColor="black">
-            더보기
-          </Button>
-        </div>
+          {visibleCount < products.length && (
+            <div
+              css={css`
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              `}
+            >
+              <Button onClick={handleMore} baseColor="white" textColor="black">
+                더보기
+              </Button>
+            </div>
+          )}
+        </>
       )}
-      </>)}
- </section> );
+    </section>
+  );
 };
 export default GiftRanking;

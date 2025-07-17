@@ -5,7 +5,9 @@ import useLoginForm from '@/hooks/useLoginForm';
 import Button from '@/components/Button';
 import type { Theme } from '@/data/theme';
 import useAuth from '@/hooks/useAuth';
-
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import type { AxiosError } from 'axios';
 interface LocationState {
   from?: {
     pathName: string;
@@ -58,10 +60,40 @@ const Login = () => {
     pwError,
   } = useLoginForm();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (isValidId && isValidPw) {
-      login({ id, name: id });
-      navigate(from, { replace: true });
+      try {
+        const response = await axios.post('/api/login', {
+          email: id,
+          password: pw,
+        });
+        const token = response.data.data.authToken;
+        localStorage.setItem('authToken', token);
+        toast.success('로그인 성공!');
+
+        setUser({
+          name: response.data.data.name,
+          email: response.data.data.email,
+          authToken: token,
+        });
+
+        const userInfo = response.data.data;
+        login(userInfo);
+        navigate(from, { replace: true });
+      } catch (error: unknown) {
+        const axiousError = error as AxiosError<{ message?: string }>;
+        if (
+          axiousError.response &&
+          axiousError.response.status >= 400 &&
+          axiousError.response.status < 500
+        ) {
+          toast.error(
+            axiousError.response.data.message || '로그인에 실패했습니다.'
+          );
+        } else {
+          toast.error('서버 오류가 발생했습니다.');
+        }
+      }
     } else {
       setTouchedId(true);
       setTouchedPw(true);
@@ -111,3 +143,6 @@ const Login = () => {
 };
 
 export default Login;
+function setUser(arg0: { name: any; email: any; authToken: any }) {
+  throw new Error('Function not implemented.');
+}
