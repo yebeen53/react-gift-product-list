@@ -40,7 +40,7 @@ const SelectFr = () => {
   const theme = useCustomTheme();
   const { user } = useAuth();
 
-  const userName = user?.id ? user.id.split('@')[0] + '님' : '';
+  const userName = user?.email ? user.email.split('@')[0] + '님' : '';
 
   return (
     <div css={containerStyle(theme)}>

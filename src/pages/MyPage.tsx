@@ -11,7 +11,7 @@ const MyPage = () => {
 
   if (!user) return null;
 
-  const nameFromEmail = user.id.split('@')[0];
+  const nameFromEmail = user.email.split('@')[0];
 
   const handleLogout = () => {
     logout();
