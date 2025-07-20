@@ -118,6 +118,7 @@ const CompleteButton = styled.button<{ theme: Theme }>`
   padding: ${({ theme }) => theme.spacing.spacing3};
   border-radius: ${({ theme }) => theme.spacing.spacing2};
   background-color: ${({ theme }) => theme.colors.semantic.kakaoYellow};
+  border: none;
 `;
 
 const RecipientModal = ({
@@ -187,7 +188,7 @@ const RecipientModal = ({
 
           <div style={{ marginTop: theme.spacing.spacing2 }}>
             <Input
-              {...register(`recipients.${index}.name` as const)}
+              {...register(`recipients.${index}.name`)}
               placeholder="이름을 입력하세요."
               theme={theme}
             />
@@ -198,7 +199,7 @@ const RecipientModal = ({
             )}
 
             <Input
-              {...register(`recipients.${index}.phoneNumber` as const)}
+              {...register(`recipients.${index}.phoneNumber`)}
               placeholder="전화번호를 입력하세요."
               theme={theme}
             />
@@ -211,7 +212,7 @@ const RecipientModal = ({
             <Input
               type="number"
               min={1}
-              {...register(`recipients.${index}.quantity` as const)}
+              {...register(`recipients.${index}.quantity`)}
               placeholder="수량"
               theme={theme}
             />

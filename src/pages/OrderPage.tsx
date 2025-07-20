@@ -80,6 +80,7 @@ const OrderPage = () => {
 
   const methods = useForm<OrderFormData>({
     resolver: zodResolver(orderSchema),
+    mode: 'onChange',
     defaultValues: {
       message: '축하해요.',
       senderName: userInfo?.name || '',
@@ -203,7 +204,6 @@ const OrderPage = () => {
           errors={errors.recipients}
           setModalOpen={setModalOpen}
           theme={theme}
-          append={append}
         />
 
         {isModalOpen && (

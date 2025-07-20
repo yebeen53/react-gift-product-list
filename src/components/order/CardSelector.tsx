@@ -44,10 +44,7 @@ const CardSelector = ({ selectedCardId, setValue, theme }: Props) => {
     );
   };
 
-  const selectedCard =
-    selectedCardId !== null
-      ? orderCard.find((c) => `card${c.id}` === selectedCardId)
-      : null;
+  const selectedCard = orderCard.find((c) => `card${c.id}` === selectedCardId);
 
   return (
     <section>

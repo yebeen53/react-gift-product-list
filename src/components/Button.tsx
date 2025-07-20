@@ -10,6 +10,7 @@ type ButtonProps = {
   transparent?: boolean;
   textColor?: string;
   disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
 };
 
 const buttonStyle = (
@@ -28,6 +29,7 @@ const buttonStyle = (
   &:hover {
     background-color: ${selected ? selectedColor : baseColor + 'cc'};
   }
+  border: none;
 `;
 
 const Button = ({
@@ -38,9 +40,11 @@ const Button = ({
   selectedColor,
   textColor = 'white',
   disabled = false,
+  type = 'submit',
 }: ButtonProps) => {
   return (
     <button
+      type={type}
       css={buttonStyle(baseColor, selectedColor, selected, textColor)}
       onClick={onClick}
       disabled={disabled}

@@ -1,13 +1,12 @@
 import Button from '@/components/Button';
-import type { FieldErrors, UseFieldArrayAppend } from 'react-hook-form';
+import type { FieldErrors } from 'react-hook-form';
 import type { OrderFormData } from '@/schemas/orderSchema';
 import styled from 'styled-components';
 import type { Theme } from '@/data/theme';
 
-type Props = {
+type RecipientSummaryProps = {
   recipients: OrderFormData['recipients'];
   errors?: FieldErrors<OrderFormData>['recipients'];
-  append: UseFieldArrayAppend<OrderFormData, 'recipients'>;
   setModalOpen: (open: boolean) => void;
   theme: Theme;
 };
@@ -31,6 +30,7 @@ const Description = styled.p<{ theme: Theme }>`
 const RecipientList = styled.ul<{ theme: Theme }>`
   padding-left: ${({ theme }) => theme.spacing.spacing5};
   margin-bottom: ${({ theme }) => theme.spacing.spacing4};
+  background-color: white;
 `;
 
 const ErrorMessage = styled.p<{ theme: Theme }>`
@@ -44,7 +44,7 @@ const RecipientSummary = ({
   errors,
   setModalOpen,
   theme,
-}: Props) => {
+}: RecipientSummaryProps) => {
   return (
     <Section theme={theme}>
       <Heading theme={theme}>받는 사람</Heading>
@@ -58,7 +58,7 @@ const RecipientSummary = ({
         <RecipientList theme={theme}>
           {recipients.map((r, index) => (
             <li key={index}>
-              {r.name || ''} {r.phoneNumber || ''} {r.quantity || 1}개
+              {r.name} {r.phoneNumber} {r.quantity || 1}개
             </li>
           ))}
         </RecipientList>
@@ -69,6 +69,7 @@ const RecipientSummary = ({
       )}
 
       <Button
+        type="button"
         baseColor={theme.colors.semantic.backgroundDefault}
         textColor={theme.colors.semantic.textDefault}
         onClick={() => setModalOpen(true)}
