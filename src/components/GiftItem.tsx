@@ -47,12 +47,12 @@ const brandStyle = (theme: Theme) => css`
   color: ${theme.colors.semantic.textDefault};
 `;
 
-const nameStyle =(theme:Theme)=> css`
+const nameStyle = (theme: Theme) => css`
   font-weight: ${theme.typography.title1Bold.fontWeight};
   margin-top: ${theme.spacing.spacing1};
 `;
 
-const priceStyle =(theme:Theme)=> css`
+const priceStyle = (theme: Theme) => css`
   font-weight: ${theme.typography.title1Bold.fontWeight};
   margin-top: ${theme.spacing.spacing1};
 `;
