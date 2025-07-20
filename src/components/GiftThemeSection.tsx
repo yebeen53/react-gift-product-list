@@ -2,10 +2,11 @@ import { css } from '@emotion/react';
 import useCustomTheme from '../hooks/useCustomTheme';
 import type { Theme } from '@/data/theme';
 import { useEffect, useState } from 'react';
-import { fetchThemes, type ThemeItem } from '@/api/themes'; 
+import { fetchThemes, type ThemeItem } from '@/api/themes';
 
 const wrapperStyle = (theme: Theme) => css`
-  padding: ${theme.spacing.spacing5};
+  padding: ${theme.spacing.spacing2};
+  margin-bottom: ${theme.spacing.spacing15};
 `;
 
 const titleStyle = (theme: Theme) => css`
@@ -29,13 +30,10 @@ const itemStyle = (theme: Theme) => css`
   flex-direction: column;
   align-items: center;
   text-align: center;
-
-  img {
-    width: 56px;
-    height: 56px;
-    object-fit: contain;
-  }
-
+  width: ${theme.spacing.spacing14};
+  height: ${theme.spacing.spacing14};
+  object-fit: contain;
+  padding: ${theme.spacing.spacing2};
   span {
     font-size: ${theme.typography.label1Regular.fontSize};
     font-weight: ${theme.typography.label1Regular.fontWeight};

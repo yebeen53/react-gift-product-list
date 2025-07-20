@@ -13,31 +13,30 @@ type Props = {
 };
 
 const Section = styled.section<{ theme: Theme }>`
-  margin-top: 16px;
+  margin-top: ${({ theme }) => theme.spacing.spacing4};
   border: 1px solid ${({ theme }) => theme.colors.semantic.borderDefault};
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: ${({ theme }) => theme.spacing.spacing3};
+  padding: ${({ theme }) => theme.spacing.spacing4};
   background: ${({ theme }) => theme.colors.semantic.backgroundDefault};
 `;
 
-const Heading = styled.h3`
-  margin-top: 0;
-  margin-bottom: 12px;
+const Heading = styled.h3<{ theme: Theme }>`
+  margin-bottom: ${({ theme }) => theme.spacing.spacing3};
 `;
 
 const Description = styled.p<{ theme: Theme }>`
   color: ${({ theme }) => theme.colors.semantic.textDefault};
 `;
 
-const RecipientList = styled.ul`
-  padding-left: 20px;
-  margin-bottom: 16px;
+const RecipientList = styled.ul<{ theme: Theme }>`
+  padding-left: ${({ theme }) => theme.spacing.spacing5};
+  margin-bottom: ${({ theme }) => theme.spacing.spacing4};
 `;
 
 const ErrorMessage = styled.p<{ theme: Theme }>`
   color: ${({ theme }) => theme.colors.semantic.statusCritical};
-  margin-bottom: 16px;
-  font-size: 13px;
+  margin-bottom: ${({ theme }) => theme.spacing.spacing4};
+  font-size: ${({ theme }) => theme.typography.subtitle2Bold.fontSize};
 `;
 
 const RecipientSummary = ({
@@ -48,7 +47,7 @@ const RecipientSummary = ({
 }: Props) => {
   return (
     <Section theme={theme}>
-      <Heading>받는 사람</Heading>
+      <Heading theme={theme}>받는 사람</Heading>
 
       {recipients.length === 0 ? (
         <Description theme={theme}>
@@ -56,7 +55,7 @@ const RecipientSummary = ({
           받는 사람을 추가해주세요.
         </Description>
       ) : (
-        <RecipientList>
+        <RecipientList theme={theme}>
           {recipients.map((r, index) => (
             <li key={index}>
               {r.name || ''} {r.phoneNumber || ''} {r.quantity || 1}개
@@ -70,7 +69,7 @@ const RecipientSummary = ({
       )}
 
       <Button
-        baseColor={theme.colors.semantic.borderDisabled}
+        baseColor={theme.colors.semantic.backgroundDefault}
         textColor={theme.colors.semantic.textDefault}
         onClick={() => setModalOpen(true)}
       >

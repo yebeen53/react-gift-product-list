@@ -1,5 +1,5 @@
 import { css, type SerializedStyles } from '@emotion/react';
-
+import theme from '@/data/theme';
 type ButtonProps = {
   children: React.ReactNode;
   onClick: () => void;
@@ -9,6 +9,7 @@ type ButtonProps = {
   css?: SerializedStyles;
   transparent?: boolean;
   textColor?: string;
+  disabled?: boolean;
 };
 
 const buttonStyle = (
@@ -19,9 +20,9 @@ const buttonStyle = (
 ) => css`
   background-color: ${selected ? selectedColor : baseColor};
   color: ${textColor};
-  padding: 6px 12px;
-  font-weight: 600;
-  font-size: 14px;
+  padding: ${theme.spacing.spacing2}${theme.spacing.spacing3};
+  font-weight: ${theme.typography.title1Bold.fontWeight};
+  font-size: ${theme.typography.subtitle1Bold.fontSize};
   cursor: pointer;
   transition: background-color 0.2s ease;
   &:hover {
@@ -36,11 +37,13 @@ const Button = ({
   baseColor,
   selectedColor,
   textColor = 'white',
+  disabled = false,
 }: ButtonProps) => {
   return (
     <button
       css={buttonStyle(baseColor, selectedColor, selected, textColor)}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>

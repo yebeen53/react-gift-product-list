@@ -5,9 +5,8 @@ import useLoginForm from '@/hooks/useLoginForm';
 import Button from '@/components/Button';
 import type { Theme } from '@/data/theme';
 import useAuth from '@/hooks/useAuth';
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { toast } from 'react-toastify';
-import type { AxiosError } from 'axios';
 interface LocationState {
   from?: {
     pathName: string;
@@ -26,13 +25,11 @@ const logContainer = (theme: Theme) => css`
 
 const logStyle = (theme: Theme, hasError: boolean) => css`
   width: 100%;
-  padding: 8px 0;
-  font-size: 16px;
-  border: none;
+  padding: ${theme.spacing.spacing2};
+  font-size: ${theme.typography.subtitle2Bold.fontSize};
   border-bottom: 1px solid
     ${hasError ? theme.colors.red800 : theme.colors.semantic.borderDefault};
   background: transparent;
-  outline: none;
   &::placeholder {
     color: ${hasError ? theme.colors.red1000 : theme.colors.gray400};
   }
@@ -74,15 +71,14 @@ const Login = () => {
         login(userInfo);
         navigate(from, { replace: true });
       } catch (error: unknown) {
-        const axiousError = error as AxiosError<{ message?: string }>;
         if (
-          axiousError.response &&
-          axiousError.response.status >= 400 &&
-          axiousError.response.status < 500
+          error instanceof Error &&
+          isAxiosError(error) &&
+          error.response &&
+          error.response.status >= 400 &&
+          error.response.status < 500
         ) {
-          toast.error(
-            axiousError.response.data.message || '로그인에 실패했습니다.'
-          );
+          toast.error(error.response.data.message || '로그인에 실패했습니다.');
         } else {
           toast.error('서버 오류가 발생했습니다.');
         }
@@ -128,6 +124,7 @@ const Login = () => {
         onClick={handleLogin}
         baseColor={theme.colors.semantic.kakaoYellow}
         textColor="black"
+        disabled={!isValidId || !isValidPw}
       >
         로그인
       </Button>
@@ -136,4 +133,3 @@ const Login = () => {
 };
 
 export default Login;
-

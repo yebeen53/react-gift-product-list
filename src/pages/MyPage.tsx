@@ -26,13 +26,13 @@ const MyPage = () => {
       <button
         onClick={handleLogout}
         css={css`
-          margin-top: 24px;
+          margin-top: ${theme.spacing.spacing6};
           padding: ${theme.spacing.spacing3} ${theme.spacing.spacing3};
           background-color: ${theme.colors.semantic.kakaoYellow};
           color: ${theme.colors.semantic.textDefault};
-          border: none;
           cursor: pointer;
-          font-weight: bold;
+          font-weight: ${theme.typography.title1Bold.fontWeight};
+          border: none;
         `}
       >
         로그아웃

@@ -181,8 +181,8 @@ const GiftRanking = () => {
         <p
           css={css`
             text-align: center;
-            margin: 40px 0;
-            font-size: 16px;
+            margin: ${theme.spacing.spacing5};
+            font-size: ${theme.typography.title1Bold.fontSize};
           `}
         >
           상품이 없습니다.
