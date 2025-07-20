@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-const isValidEmail = (email: string) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isValidEmail = (email: string) => /^[^\s@]+@kakao\.com$/.test(email);
 
 const useLoginForm = () => {
   const [id, setId] = useState('');
@@ -15,7 +14,7 @@ const useLoginForm = () => {
   if (!id.trim()) {
     idError = '아이디를 입력해주세요.';
   } else if (!isValidEmail(id.trim())) {
-    idError = '아이디는 이메일 형식으로 입력해주세요.';
+    idError = '아이디는 kakao.com 이메일 형식으로 입력해주세요.';
   } else {
     idError = '';
   }

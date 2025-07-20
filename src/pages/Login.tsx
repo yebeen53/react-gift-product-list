@@ -5,8 +5,10 @@ import useLoginForm from '@/hooks/useLoginForm';
 import Button from '@/components/Button';
 import type { Theme } from '@/data/theme';
 import useAuth from '@/hooks/useAuth';
-import axios, { isAxiosError } from 'axios';
+import axios from 'axios';
 import { toast } from 'react-toastify';
+import { isClientRequestError, isServerError } from '@/utils/http';
+
 interface LocationState {
   from?: {
     pathName: string;
@@ -27,6 +29,7 @@ const logStyle = (theme: Theme, hasError: boolean) => css`
   width: 100%;
   padding: ${theme.spacing.spacing2};
   font-size: ${theme.typography.subtitle2Bold.fontSize};
+  border: none;
   border-bottom: 1px solid
     ${hasError ? theme.colors.red800 : theme.colors.semantic.borderDefault};
   background: transparent;
@@ -71,16 +74,19 @@ const Login = () => {
         login(userInfo);
         navigate(from, { replace: true });
       } catch (error: unknown) {
-        if (
-          error instanceof Error &&
-          isAxiosError(error) &&
-          error.response &&
-          error.response.status >= 400 &&
-          error.response.status < 500
-        ) {
-          toast.error(error.response.data.message || '로그인에 실패했습니다.');
+        if (axios.isAxiosError(error)) {
+          if (isClientRequestError(error)) {
+            toast.error(
+              error.response?.data?.message || '로그인에 실패했습니다.'
+            );
+          } else if (isServerError(error)) {
+            toast.error('서버 오류가 발생했습니다.');
+          } else {
+            toast.error('알 수 없는 오류가 발생했습니다.');
+          }
         } else {
-          toast.error('서버 오류가 발생했습니다.');
+          console.error('Unexpected error:', error);
+          toast.error('예상치 못한 오류가 발생했습니다.');
         }
       }
     } else {
@@ -122,7 +128,11 @@ const Login = () => {
 
       <Button
         onClick={handleLogin}
-        baseColor={theme.colors.semantic.kakaoYellow}
+        baseColor={
+          !isValidId || !isValidPw
+            ? theme.colors.semantic.kakaoYellowActive
+            : theme.colors.semantic.kakaoYellowHover
+        }
         textColor="black"
         disabled={!isValidId || !isValidPw}
       >
