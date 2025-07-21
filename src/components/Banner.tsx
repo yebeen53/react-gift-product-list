@@ -9,6 +9,7 @@ const containerStyle = (theme: Theme) => css`
   flex-direction: column;
   color: ${theme.colors.semantic.textDefault};
   padding: ${theme.spacing.spacing4};
+  gap: ${theme.spacing.spacing1};
 `;
 
 const textStyle = (theme: Theme) => css`

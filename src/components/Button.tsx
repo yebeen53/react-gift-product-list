@@ -21,7 +21,7 @@ const buttonStyle = (
 ) => css`
   background-color: ${selected ? selectedColor : baseColor};
   color: ${textColor};
-  padding: ${theme.spacing.spacing2}${theme.spacing.spacing3};
+  padding: ${theme.spacing.spacing2} ${theme.spacing.spacing3};
   font-weight: ${theme.typography.title1Bold.fontWeight};
   font-size: ${theme.typography.subtitle1Bold.fontSize};
   cursor: pointer;
