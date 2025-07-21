@@ -130,7 +130,7 @@ const OrderPage = () => {
         },
 
         {
-          headers: {
+         headers: {
             Authorization: 'dummy-token',
             'Content-Type': 'application/json',
           },
