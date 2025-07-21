@@ -115,6 +115,12 @@ const OrderPage = () => {
   const totalPrice = totalQuantity * productPrice;
 
   const onSubmit: SubmitHandler<OrderFormData> = async (data) => {
+    if (!userInfo?.authToken) {
+      toast.error('인증 정보가 없습니다.');
+      navigate('/');
+      return;
+    }
+
     try {
       await axios.post(
         '/api/order',
@@ -132,7 +138,7 @@ const OrderPage = () => {
 
         {
           headers: {
-            Authorization: 'dummy-token',
+            Authorization: 'Bearer ${userInfo.authToken}',
             'Content-Type': 'application/json',
           },
         }
