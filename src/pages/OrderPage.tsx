@@ -80,7 +80,6 @@ const OrderPage = () => {
 
   const methods = useForm<OrderFormData>({
     resolver: zodResolver(orderSchema),
-    mode: 'onChange',
     defaultValues: {
       message: '축하해요.',
       senderName: userInfo?.name || '',
@@ -115,12 +114,6 @@ const OrderPage = () => {
   const totalPrice = totalQuantity * productPrice;
 
   const onSubmit: SubmitHandler<OrderFormData> = async (data) => {
-    if (!userInfo?.authToken) {
-      toast.error('인증 정보가 없습니다.');
-      navigate('/');
-      return;
-    }
-
     try {
       await axios.post(
         '/api/order',
@@ -138,7 +131,7 @@ const OrderPage = () => {
 
         {
           headers: {
-            Authorization: 'Bearer ${userInfo.authToken}',
+            Authorization: 'dummy-token',
             'Content-Type': 'application/json',
           },
         }
@@ -210,6 +203,7 @@ const OrderPage = () => {
           errors={errors.recipients}
           setModalOpen={setModalOpen}
           theme={theme}
+          append={append}
         />
 
         {isModalOpen && (
