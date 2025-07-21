@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route} from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import GlobalStyles from '@/components/GlobalStyles';
 import Navibar from '@/components/Navibar';
 import Login from '@/pages/Login';
@@ -19,7 +19,8 @@ function App() {
         <Navibar />
         <ToastContainer position="top-center" />
         <Routes>
-        <Route path="/" element={<GiftHomePage />} />
+          <Route path="/" element={<Navigate to="/homepage" replace />} />
+          <Route path="/" element={<GiftHomePage />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/homepage/login" element={<Login />} />
           <Route path="/order/:productId" element={<OrderPage />} />

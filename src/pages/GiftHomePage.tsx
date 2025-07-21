@@ -17,9 +17,7 @@ const GiftHomePage = () => {
           fontSize: theme.typography.title1Bold.lineHeight,
           marginBottom: theme.spacing.spacing4,
         }}
-      >
-        🎁 선물하기 홈
-      </h1>
+      ></h1>
       {error && <p>{error}</p>}
 
       {themes.map((theme) => (
