@@ -203,7 +203,7 @@ const OrderPage = () => {
           errors={errors.recipients}
           setModalOpen={setModalOpen}
           theme={theme}
-          append={append}
+
         />
 
         {isModalOpen && (
