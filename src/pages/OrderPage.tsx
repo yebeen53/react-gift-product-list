@@ -75,6 +75,7 @@ const OrderPage = () => {
         }
       }
     };
+
     fetchProduct();
   }, [productId, navigate]);
 
@@ -115,7 +116,9 @@ const OrderPage = () => {
   const totalPrice = totalQuantity * productPrice;
 
   const onSubmit: SubmitHandler<OrderFormData> = async (data) => {
-    if (!userInfo?.authToken) {
+    const authToken = localStorage.getItem('authToken');
+
+    if (!authToken) {
       toast.error('인증 정보가 없습니다.');
       navigate('/');
       return;
@@ -135,10 +138,9 @@ const OrderPage = () => {
             quantity: Number(r.quantity),
           })),
         },
-
         {
           headers: {
-            Authorization: 'dummy-token',
+            Authorization: `${authToken}`,
             'Content-Type': 'application/json',
           },
         }
@@ -177,6 +179,7 @@ const OrderPage = () => {
       }
     }
   };
+
   return (
     <FormProvider {...methods}>
       <form

@@ -68,9 +68,11 @@ const Login = () => {
           password: pw,
         });
         const token = response.data.data.authToken;
+        const { id: userId, name, email } = response.data.data;
+        const userInfo = { id: userId, name, email, authToken: token };
         localStorage.setItem('authToken', token);
+        localStorage.setItem('user', JSON.stringify(userInfo));
         toast.success('로그인 성공!');
-        const userInfo = response.data.data;
         login(userInfo);
         navigate(from, { replace: true });
       } catch (error: unknown) {
