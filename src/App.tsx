@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import GlobalStyles from '@/components/GlobalStyles';
 import Navibar from '@/components/Navibar';
 import Login from '@/pages/Login';
@@ -9,7 +9,6 @@ import MyPage from './pages/MyPage';
 import OrderPage from './pages/OrderPage';
 import { ToastContainer } from 'react-toastify';
 import ThemeProductPage from './pages/ThemeProductPage';
-import GiftHomePage from './pages/GiftHomePage';
 
 function App() {
   return (
@@ -19,10 +18,8 @@ function App() {
         <Navibar />
         <ToastContainer position="top-center" />
         <Routes>
-          <Route path="/" element={<Navigate to="/homepage" replace />} />
-          <Route path="/" element={<GiftHomePage />} />
-          <Route path="/homepage" element={<Homepage />} />
-          <Route path="/homepage/login" element={<Login />} />
+          <Route path="/" element={<Homepage />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/order/:productId" element={<OrderPage />} />
           <Route path="/my" element={<MyPage />} />
           <Route path="/themes/:themeId" element={<ThemeProductPage />} />
