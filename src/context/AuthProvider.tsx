@@ -1,13 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { AuthContext } from './AuthContext';
-
-
-type User = {
-  id: string;
-  name: string;
-};
-
+import { AuthContext, type User } from './AuthContext';
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -15,8 +8,8 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(() => {
     try {
-      const stored = localStorage.getItem('user');
-      return stored ? JSON.parse(stored) : null;
+      const storedUserInfo = localStorage.getItem('user');
+      return storedUserInfo ? JSON.parse(storedUserInfo) : null;
     } catch {
       return null;
     }

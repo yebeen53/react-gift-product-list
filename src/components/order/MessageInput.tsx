@@ -8,35 +8,32 @@ type Props = {
   theme: Theme;
 };
 
-const Wrapper = styled.div`
-  margin: 12px 0;
-`;
+const Wrapper = styled.div<{ theme: Theme }>``;
 
-const Label = styled.label`
-  font-weight: 500;
+const Label = styled.label<{ theme: Theme }>`
+  font-weight: ${({ theme }) => theme.typography.title1Bold.fontWeight};
 `;
 
 const TextArea = styled.textarea<{ theme: Theme }>`
   width: 100%;
-  height: 60px;
-  border-radius: 8px;
-  padding: 5px;
+  height: ${({ theme }) => theme.spacing.spacing16};
+  border-radius: ${({ theme }) => theme.spacing.spacing2};
+  padding: ${({ theme }) => theme.spacing.spacing1};
   border: 1px solid ${({ theme }) => theme.colors.semantic.borderDefault};
   background-color: ${({ theme }) => theme.colors.semantic.backgroundDefault};
   color: ${({ theme }) => theme.colors.semantic.textDefault};
-  resize: none;
 `;
 
 const ErrorMessage = styled.p<{ theme: Theme }>`
   color: ${({ theme }) => theme.colors.semantic.statusCritical};
-  margin-top: 4px;
-  font-size: 13px;
+  margin-top: ${({ theme }) => theme.spacing.spacing4};
+  font-size: ${({ theme }) => theme.typography.subtitle2Bold.fontSize};
 `;
 
 const MessageInput = ({ register, error, theme }: Props) => {
   return (
-    <Wrapper>
-      <Label>메시지</Label>
+    <Wrapper theme={theme}>
+      <Label theme={theme}>메시지</Label>
       <TextArea {...register('message')} rows={3} theme={theme} />
       {error && <ErrorMessage theme={theme}>{error.message}</ErrorMessage>}
     </Wrapper>

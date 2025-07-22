@@ -9,8 +9,6 @@ const GlobalStyles = () => {
         *::before,
         *::after {
           box-sizing: border-box;
-          margin: 0;
-          padding: 0;
         }
 
         html,
@@ -41,13 +39,9 @@ const GlobalStyles = () => {
         }
 
         ul,
-        ol {
-          list-style: none;
-        }
-
         button {
           background: grey;
-          border: none;
+
           cursor: pointer;
           font: inherit;
         }

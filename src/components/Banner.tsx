@@ -4,12 +4,12 @@ import type { Theme } from '@/data/theme';
 
 const containerStyle = (theme: Theme) => css`
   background-color: ${theme.colors.semantic.kakaoYellow};
-  border-radius: 10px;
-  padding: ${theme.spacing.spacing4};
+  border-radius: ${theme.spacing.spacing2};
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.spacing1};
   color: ${theme.colors.semantic.textDefault};
+  padding: ${theme.spacing.spacing4};
+  gap: ${theme.spacing.spacing1};
 `;
 
 const textStyle = (theme: Theme) => css`
@@ -17,6 +17,7 @@ const textStyle = (theme: Theme) => css`
   font-weight: ${theme.typography.label1Regular.fontWeight};
   line-height: ${theme.typography.label1Regular.lineHeight};
   color: ${theme.colors.semantic.textDefault};
+  margin: 0;
 `;
 
 const t2Style = (theme: Theme) => css`
@@ -24,6 +25,7 @@ const t2Style = (theme: Theme) => css`
   font-weight: ${theme.typography.subtitle1Bold.fontWeight};
   line-height: ${theme.typography.subtitle1Bold.lineHeight};
   color: ${theme.colors.semantic.textDefault};
+  margin: 0;
 `;
 
 const Banner = () => {

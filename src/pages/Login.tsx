@@ -5,6 +5,9 @@ import useLoginForm from '@/hooks/useLoginForm';
 import Button from '@/components/Button';
 import type { Theme } from '@/data/theme';
 import useAuth from '@/hooks/useAuth';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { isClientRequestError, isServerError } from '@/utils/http';
 
 interface LocationState {
   from?: {
@@ -24,13 +27,12 @@ const logContainer = (theme: Theme) => css`
 
 const logStyle = (theme: Theme, hasError: boolean) => css`
   width: 100%;
-  padding: 8px 0;
-  font-size: 16px;
+  padding: ${theme.spacing.spacing2};
+  font-size: ${theme.typography.subtitle2Bold.fontSize};
   border: none;
   border-bottom: 1px solid
     ${hasError ? theme.colors.red800 : theme.colors.semantic.borderDefault};
   background: transparent;
-  outline: none;
   &::placeholder {
     color: ${hasError ? theme.colors.red1000 : theme.colors.gray400};
   }
@@ -58,10 +60,37 @@ const Login = () => {
     pwError,
   } = useLoginForm();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (isValidId && isValidPw) {
-      login({ id, name: id });
-      navigate(from, { replace: true });
+      try {
+        const response = await axios.post('/api/login', {
+          email: id,
+          password: pw,
+        });
+        const token = response.data.data.authToken;
+        const { id: userId, name, email } = response.data.data;
+        const userInfo = { id: userId, name, email, authToken: token };
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('user', JSON.stringify(userInfo));
+        toast.success('로그인 성공!');
+        login(userInfo);
+        navigate(from, { replace: true });
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          if (isClientRequestError(error)) {
+            toast.error(
+              error.response?.data?.message || '로그인에 실패했습니다.'
+            );
+          } else if (isServerError(error)) {
+            toast.error('서버 오류가 발생했습니다.');
+          } else {
+            toast.error('알 수 없는 오류가 발생했습니다.');
+          }
+        } else {
+          console.error('Unexpected error:', error);
+          toast.error('예상치 못한 오류가 발생했습니다.');
+        }
+      }
     } else {
       setTouchedId(true);
       setTouchedPw(true);
@@ -101,8 +130,13 @@ const Login = () => {
 
       <Button
         onClick={handleLogin}
-        baseColor={theme.colors.semantic.kakaoYellow}
+        baseColor={
+          !isValidId || !isValidPw
+            ? theme.colors.semantic.kakaoYellowActive
+            : theme.colors.semantic.kakaoYellowHover
+        }
         textColor="black"
+        disabled={!isValidId || !isValidPw}
       >
         로그인
       </Button>

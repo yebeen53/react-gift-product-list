@@ -8,7 +8,7 @@ const useRequireAuth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    if (!user || !user.authToken) {
       navigate('/homepage/login', {
         replace: true,
         state: { from: location.pathname },

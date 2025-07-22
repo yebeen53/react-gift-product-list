@@ -14,7 +14,7 @@ interface GiftItemProps {
 
 const cardStyle = (theme: Theme) => css`
   position: relative;
-  border-radius: 8px;
+  border-radius: ${theme.spacing.spacing2};
   overflow: hidden;
   padding: ${theme.spacing.spacing2};
   text-align: center;
@@ -22,18 +22,18 @@ const cardStyle = (theme: Theme) => css`
 
 const rankBadge = (theme: Theme, highlight?: boolean) => css`
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: ${theme.spacing.spacing2};
+  left: ${theme.spacing.spacing1};
   background-color: ${highlight ? theme.colors.red800 : theme.colors.gray700};
   color: white;
-  font-size: 12px;
-  width: 24px;
-  height: 24px;
-  border-radius: 5px;
+  font-size: ${theme.typography.label1Bold.fontSize};
+  width: ${theme.spacing.spacing6};
+  height: ${theme.spacing.spacing6};
+  border-radius: ${theme.spacing.spacing2};
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  font-weight: ${theme.typography.title1Bold.fontWeight};
 `;
 
 const imageStyle = (theme: Theme) => css`
@@ -43,18 +43,18 @@ const imageStyle = (theme: Theme) => css`
 `;
 
 const brandStyle = (theme: Theme) => css`
-  font-size: 12px;
+  font-size: ${theme.typography.label1Bold.fontSize};
   color: ${theme.colors.semantic.textDefault};
 `;
 
-const nameStyle = css`
-  font-weight: 500;
-  margin-top: 2px;
+const nameStyle = (theme: Theme) => css`
+  font-weight: ${theme.typography.title1Bold.fontWeight};
+  margin-top: ${theme.spacing.spacing1};
 `;
 
-const priceStyle = css`
-  font-weight: bold;
-  margin-top: 4px;
+const priceStyle = (theme: Theme) => css`
+  font-weight: ${theme.typography.title1Bold.fontWeight};
+  margin-top: ${theme.spacing.spacing1};
 `;
 
 const GiftItem = ({
@@ -73,8 +73,8 @@ const GiftItem = ({
       )}
       <img src={image} alt={name} css={imageStyle(theme)} />
       <div css={brandStyle(theme)}>{brand}</div>
-      <div css={nameStyle}>{name}</div>
-      <div css={priceStyle}>{price.toLocaleString()} 원</div>
+      <div css={nameStyle(theme)}>{name}</div>
+      <div css={priceStyle(theme)}>{price.toLocaleString()} 원</div>
     </div>
   );
 };
