@@ -75,11 +75,13 @@ const OrderPage = () => {
         }
       }
     };
+
     fetchProduct();
   }, [productId, navigate]);
 
   const methods = useForm<OrderFormData>({
     resolver: zodResolver(orderSchema),
+    mode: 'onChange',
     defaultValues: {
       message: '축하해요.',
       senderName: userInfo?.name || '',
@@ -114,6 +116,14 @@ const OrderPage = () => {
   const totalPrice = totalQuantity * productPrice;
 
   const onSubmit: SubmitHandler<OrderFormData> = async (data) => {
+    const authToken = localStorage.getItem('authToken');
+
+    if (!authToken) {
+      toast.error('인증 정보가 없습니다.');
+      navigate('/');
+      return;
+    }
+
     try {
       await axios.post(
         '/api/order',
@@ -128,10 +138,9 @@ const OrderPage = () => {
             quantity: Number(r.quantity),
           })),
         },
-
         {
-         headers: {
-            Authorization: 'dummy-token',
+          headers: {
+            Authorization: `${authToken}`,
             'Content-Type': 'application/json',
           },
         }
@@ -170,6 +179,7 @@ const OrderPage = () => {
       }
     }
   };
+
   return (
     <FormProvider {...methods}>
       <form
@@ -203,7 +213,6 @@ const OrderPage = () => {
           errors={errors.recipients}
           setModalOpen={setModalOpen}
           theme={theme}
-
         />
 
         {isModalOpen && (
