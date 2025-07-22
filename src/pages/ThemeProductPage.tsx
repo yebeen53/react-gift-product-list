@@ -5,11 +5,13 @@ import ProductList from '@/components/ProductList';
 import { useThemeProducts } from '@/hooks/useThemeProduct';
 import { useThemes } from '@/hooks/useThemes';
 import HeroBanner from '@/components/HeroBanner';
+import type { Theme } from '@/data/theme';
+import theme from '@/data/theme';
 
-const containerStyle = css`
+const containerStyle = (theme: Theme) => css`
   max-width: 960px;
   margin: 0 auto;
-  padding: 24px;
+  padding: ${theme.spacing.spacing4};
 `;
 
 const ThemeProductPage = () => {
@@ -22,14 +24,14 @@ const ThemeProductPage = () => {
     loading: productsLoading,
     error,
     hasNextPage,
-    setCursor,
+    fetchNextProduct,
   } = useThemeProducts(themeId ?? '');
 
   const bannerInfo = themes.find((b) => b.themeId === numericThemeId);
   const isLoading = themeLoading || productsLoading;
 
   return (
-    <div css={containerStyle}>
+    <div css={containerStyle(theme)}>
       {bannerInfo && (
         <HeroBanner
           info={{
@@ -48,7 +50,7 @@ const ThemeProductPage = () => {
         <ProductList
           products={products}
           hasNextPage={hasNextPage}
-          setPage={setCursor}
+          setPage={fetchNextProduct}
           loading={productsLoading}
           error={error}
         />
