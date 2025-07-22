@@ -3,12 +3,11 @@ import { css } from '@emotion/react';
 import axios from 'axios';
 import ProductList from '@/components/ProductList';
 import { useThemeProducts } from '@/hooks/useThemeProduct';
-import { useThemes } from '@/hooks/useThemes';
+import { useThemeInfo } from '@/hooks/useThemeInfo';
 import HeroBanner from '@/components/HeroBanner';
 import type { Theme } from '@/data/theme';
 import theme from '@/data/theme';
 import { useEffect } from 'react';
-
 const containerStyle = (theme: Theme) => css`
   max-width: 960px;
   margin: 0 auto;
@@ -17,31 +16,25 @@ const containerStyle = (theme: Theme) => css`
 
 const ThemeProductPage = () => {
   const { themeId } = useParams<{ themeId: string }>();
-  const numericThemeId = Number(themeId);
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchThemes = async () => {
-      try {
-      } catch (error: any) {
-        if (axios.isAxiosError(error) && error.response?.status === 404) {
-          navigate('/');
-        }
-      }
-    };
-    fetchThemes();
-  }, []);
-
-  const { themes, loading: themeLoading } = useThemes();
+  const { info: bannerInfo, error: themeError } = useThemeInfo(themeId ?? '');
   const {
     products,
     loading: productsLoading,
-    error,
+    error: productsError,
     hasNextPage,
     fetchNextProduct,
   } = useThemeProducts(themeId ?? '');
 
-  const bannerInfo = themes.find((b) => b.themeId === numericThemeId);
-  const isLoading = themeLoading || productsLoading;
+  useEffect(() => {
+    if (
+      themeError &&
+      axios.isAxiosError(themeError) &&
+      themeError.response?.status === 404
+    ) {
+      navigate('/');
+    }
+  }, [themeError, navigate]);
 
   return (
     <div css={containerStyle(theme)}>
@@ -57,17 +50,21 @@ const ThemeProductPage = () => {
         />
       )}
 
-      {error && <p>오류 발생: {error}</p>}
-
-      {!isLoading && (
-        <ProductList
-          products={products}
-          hasNextPage={hasNextPage}
-          setPage={fetchNextProduct}
-          loading={productsLoading}
-          error={error}
-        />
+      {themeError && !axios.isAxiosError(themeError) && (
+        <p>테마 정보를 불러오지 못했습니다.</p>
       )}
+
+      {productsError && (
+        <p>상품 목록을 불러오지 못했습니다: {String(productsError)}</p>
+      )}
+
+      <ProductList
+        products={products}
+        hasNextPage={hasNextPage}
+        setPage={fetchNextProduct}
+        loading={productsLoading}
+        error={productsError}
+      />
     </div>
   );
 };
