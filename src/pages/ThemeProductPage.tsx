@@ -36,6 +36,10 @@ const ThemeProductPage = () => {
     }
   }, [themeError, navigate]);
 
+  const handleProductClick = (productId: string | number) => {
+    navigate(`/order/${productId}`);
+  };
+
   return (
     <div css={containerStyle(theme)}>
       {bannerInfo && (
@@ -64,6 +68,7 @@ const ThemeProductPage = () => {
         setPage={fetchNextProduct}
         loading={productsLoading}
         error={productsError}
+        onProductClick={handleProductClick}
       />
     </div>
   );

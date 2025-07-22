@@ -23,6 +23,7 @@ interface ProductListProps {
   setPage: React.Dispatch<React.SetStateAction<number>>;
   loading: boolean;
   error: string | null;
+  onProductClick?: (productId: string | number) => void;
 }
 
 const ProductList = ({
@@ -31,6 +32,7 @@ const ProductList = ({
   setPage,
   loading,
   error,
+  onProductClick
 }: ProductListProps) => {
   const observer = useRef<IntersectionObserver | null>(null);
 
@@ -60,6 +62,8 @@ const ProductList = ({
         <div
           key={product.id}
           ref={i === products.length - 1 ? lastRef : undefined}
+          onClick={() => onProductClick && onProductClick(product.id)}
+          style={{ cursor: 'pointer' }} 
         >
           <ProductCard product={product} />
         </div>
