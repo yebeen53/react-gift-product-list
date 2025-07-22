@@ -1,12 +1,13 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { css } from '@emotion/react';
-
+import axios from 'axios';
 import ProductList from '@/components/ProductList';
 import { useThemeProducts } from '@/hooks/useThemeProduct';
 import { useThemes } from '@/hooks/useThemes';
 import HeroBanner from '@/components/HeroBanner';
 import type { Theme } from '@/data/theme';
 import theme from '@/data/theme';
+import { useEffect } from 'react';
 
 const containerStyle = (theme: Theme) => css`
   max-width: 960px;
@@ -17,6 +18,18 @@ const containerStyle = (theme: Theme) => css`
 const ThemeProductPage = () => {
   const { themeId } = useParams<{ themeId: string }>();
   const numericThemeId = Number(themeId);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+      } catch (error: any) {
+        if (axios.isAxiosError(error) && error.response?.status === 404) {
+          navigate('/');
+        }
+      }
+    };
+    fetchThemes();
+  }, []);
 
   const { themes, loading: themeLoading } = useThemes();
   const {
