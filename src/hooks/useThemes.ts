@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { apiClient } from '@/api/apiClient';
 
 export interface ThemeBase {
@@ -7,68 +8,34 @@ export interface ThemeBase {
   image: string;
 }
 
-export interface ThemeDetail {
-  themeId: number;
-  title: string;
-  description: string | null;
-  backgroundColor: string;
-}
-
-export type ThemeItem = ThemeBase & ThemeDetail;
-
 const fetchThemes = async (): Promise<ThemeBase[]> => {
   const res = await apiClient.get('/api/themes');
-  const data = res.data?.data;
-  return Array.isArray(data) ? data : [];
-};
-
-const fetchThemeDetail = async (
-  themeId: number
-): Promise<ThemeDetail | null> => {
-  try {
-    const res = await apiClient.get(`/api/themes/${themeId}/info`);
-    return res.data?.data ?? null;
-  } catch {
-    return null;
-  }
+  return Array.isArray(res.data?.data) ? res.data.data : [];
 };
 
 export const useThemes = () => {
-  const [themes, setThemes] = useState<ThemeItem[]>([]);
+  const [themes, setThemes] = useState<ThemeBase[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       setLoading(true);
       try {
-        const baseThemes = await fetchThemes();
-        const details = await Promise.all(
-          baseThemes.map((theme) => fetchThemeDetail(theme.themeId))
-        );
-
-        const merged = baseThemes.map((base, index) => {
-          const detail = details[index];
-          return {
-            themeId: base.themeId,
-            name: base.name,
-            image: base.image,
-            title: detail?.title ?? base.name,
-            description: detail?.description ?? '',
-            backgroundColor: detail?.backgroundColor ?? '#333',
-          };
-        });
-
-        setThemes(merged);
-      } catch (err) {
-        console.error('테마 목록 병합 실패:', err);
-        setError('테마 데이터를 불러오는 데 실패했어요.');
+        const data = await fetchThemes();
+        setThemes(data);
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          const msg =
+            err.response?.data?.message || '서버 요청 중 오류가 발생했습니다.';
+          setError(msg);
+        } else {
+          setError('알 수 없는 오류가 발생했습니다.');
+        }
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchData();
+    })();
   }, []);
 
   return { themes, loading, error };
