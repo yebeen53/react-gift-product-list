@@ -138,7 +138,7 @@ const OrderPage = () => {
 
         {
           headers: {
-            Authorization: 'Bearer ${userInfo.authToken}',
+            Authorization: 'dummy-token',
             'Content-Type': 'application/json',
           },
         }
